@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("aspnetegitim")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1c52b72293924709119d442f111caa5208524c8f")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a1ff9659a29adb69b2c248f894be61032d61d375")]
 [assembly: System.Reflection.AssemblyProductAttribute("aspnetegitim")]
 [assembly: System.Reflection.AssemblyTitleAttribute("aspnetegitim")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

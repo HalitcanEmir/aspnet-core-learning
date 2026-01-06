@@ -34,21 +34,30 @@ public static class PagesEndpoints
         });
 
         // Projeler
-        app.MapGet("/projeler", () =>
-        {
-            var body = """
+app.MapGet("/projeler", (Services.ProjectService projectService) =>
+{
+    var projects = projectService.GetAll();
+
+    var items = string.Join("", projects.Select(p =>
+        $"""
+<li>
+  <b>{System.Net.WebUtility.HtmlEncode(p.Name)}</b> — {System.Net.WebUtility.HtmlEncode(p.Status)}<br/>
+  <small>{System.Net.WebUtility.HtmlEncode(p.Description)}</small>
+</li>
+"""
+    ));
+
+    var body = $"""
 <h1>Projeler</h1>
 <div class="card">
   <ul>
-    <li>LifePlan</li>
-    <li>Fikir Pazarı</li>
-    <li>HSD OSTİMTECH Web</li>
+    {items}
   </ul>
 </div>
 """;
-            return Results.Content(Layout("Projeler", body), "text/html; charset=utf-8");
-        });
 
+    return Results.Content(Layout("Projeler", body), "text/html; charset=utf-8");
+});
         // İletişim (GET)
         app.MapGet("/iletisim", () =>
         {
