@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aspnetegitim", "aspnetegitim.csproj", "{CE2EEEF6-DE9B-81A2-C962-B1600997B8FF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CE2EEEF6-DE9B-81A2-C962-B1600997B8FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CE2EEEF6-DE9B-81A2-C962-B1600997B8FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CE2EEEF6-DE9B-81A2-C962-B1600997B8FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CE2EEEF6-DE9B-81A2-C962-B1600997B8FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {417AE898-F24B-4C6C-A072-AA830692BBAF}
+	EndGlobalSection
+EndGlobal
