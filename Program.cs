@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Dependency Injection: Bu servis her request’te kullanılabilsin diye ekliyoruz
 builder.Services.AddScoped<ContactService>();
 builder.Services.AddSingleton<ProjectService>();
+builder.Services.AddSingleton<MessageService>();
 
 
 var app = builder.Build();

@@ -1,3 +1,4 @@
+using System.Linq;
 using aspnetegitim.Models;
 
 namespace aspnetegitim.Services;
@@ -16,5 +17,10 @@ public class ProjectService
     {
         // Gerçek hayatta burada DB sorgusu olur
         return _projects;
+    }
+
+    public Project? GetById(int id)
+    {
+        return _projects.FirstOrDefault(p => p.Id == id);
     }
 }

@@ -81,9 +81,12 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
         });
 
         // İletişim (POST)
-        app.MapPost("/iletisim", async (HttpRequest request, Services.ContactService contactService) =>
+        app.MapPost("/iletisim", async (HttpRequest request, Services.ContactService contactService, Services.MessageService messageService) =>
         {
             var result = await contactService.HandleAsync(request);
+
+            // Mesajı kaydet (HTML-encoded ve satır sonları <br/> ile)
+            messageService.Add(result.FullName, result.MessageHtml);
 
             var body = $"""
 <h1>Teşekkürler!</h1>
@@ -94,6 +97,32 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
 """;
 
             return Results.Content(Layout("Gönderildi", body), "text/html; charset=utf-8");
+        });
+
+        // Mesajlar - kayıtlı iletişim mesajları
+        app.MapGet("/mesajlar", (Services.MessageService messageService) =>
+        {
+            var messages = messageService.GetAll();
+
+            var items = string.Join("", messages.Select(m =>
+                $"""
+<li>
+  <b>{System.Net.WebUtility.HtmlEncode(m.FullName)}</b> — <small>{m.CreatedAt.ToLocalTime():g}</small>
+  <div style=\"margin-top:6px;\">{m.BodyHtml}</div>
+</li>
+"""
+            ));
+
+            var body = $"""
+<h1>Mesajlar</h1>
+<div class="card">
+  <ul>
+    {items}
+  </ul>
+</div>
+""";
+
+            return Results.Content(Layout("Mesajlar", body), "text/html; charset=utf-8");
         });
     }
 
@@ -121,6 +150,7 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
     <a href=""/hakkimda"">Hakkımda</a>
     <a href=""/projeler"">Projeler</a>
     <a href=""/iletisim"">İletişim</a>
+    <a href=""/mesajlar"">Mesajlar</a>
   </nav>
 
   " + body + @"
