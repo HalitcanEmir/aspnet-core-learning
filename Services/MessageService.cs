@@ -1,46 +1,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using aspnetegitim.Models;
+using aspnetegitim.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace aspnetegitim.Services;
 
 public class MessageService
 {
-    private readonly List<Message> _messages = new();
-    private int _nextId = 1;
-    private readonly object _lock = new();
+    private readonly AppDbContext _db;
+
+    public MessageService(AppDbContext db)
+    {
+        _db = db;
+    }
 
     public Message Add(string fullName, string bodyHtml)
     {
         var msg = new Message
         {
-            Id = GetNextId(),
             FullName = fullName,
             BodyHtml = bodyHtml,
             CreatedAt = System.DateTime.UtcNow
         };
 
-        lock (_lock)
-        {
-            _messages.Add(msg);
-        }
+        _db.Messages.Add(msg);
+        _db.SaveChanges();
 
         return msg;
     }
 
-    private int GetNextId()
-    {
-        lock (_lock)
-        {
-            return _nextId++;
-        }
-    }
-
     public List<Message> GetAll()
     {
-        lock (_lock)
-        {
-            return _messages.OrderByDescending(m => m.CreatedAt).ToList();
-        }
+        return _db.Messages.OrderByDescending(m => m.CreatedAt).ToList();
     }
 }
+
