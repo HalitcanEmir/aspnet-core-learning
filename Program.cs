@@ -14,4 +14,5 @@ var app = builder.Build();
 // Route’ları ayrı dosyada tanımladık
 app.MapPages();
 
+
 app.Run();

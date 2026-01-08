@@ -50,6 +50,22 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
     var body = $"""
 <h1>Projeler</h1>
 <div class="card">
+  <h3>Yeni Proje Ekle</h3>
+  <form method="post" action="/projeler">
+    <label>Proje Adı</label>
+    <input name="name" placeholder="Proje adı" />
+
+    <label style="display:block; margin-top:8px;">Açıklama</label>
+    <textarea name="description" rows="3" placeholder="Kısa açıklama"></textarea>
+
+    <label style="display:block; margin-top:8px;">Durum</label>
+    <input name="status" placeholder="Devam ediyor / Tamamlandı" />
+
+    <div style="margin-top:12px;">
+      <button type="submit">Ekle</button>
+    </div>
+  </form>
+  <hr/>
   <ul>
     {items}
   </ul>
@@ -57,6 +73,26 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
 """;
 
     return Results.Content(Layout("Projeler", body), "text/html; charset=utf-8");
+});
+
+// Projeler (POST) - yeni proje oluştur
+app.MapPost("/projeler", async (HttpRequest request, Services.ProjectService projectService) =>
+{
+    var form = await request.ReadFormAsync();
+    var name = System.Net.WebUtility.HtmlEncode(form["name"].ToString());
+    var description = System.Net.WebUtility.HtmlEncode(form["description"].ToString());
+    var status = System.Net.WebUtility.HtmlEncode(form["status"].ToString());
+
+    var project = new aspnetegitim.Models.Project
+    {
+        Name = name,
+        Description = description,
+        Status = string.IsNullOrWhiteSpace(status) ? "Devam ediyor" : status
+    };
+
+    projectService.Add(project);
+
+    return Results.Redirect("/projeler");
 });
         // İletişim (GET)
         app.MapGet("/iletisim", () =>

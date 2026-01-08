@@ -13,6 +13,9 @@ public class ProjectService
         new Project { Id = 3, Name = "HSD OSTİMTECH Web", Description = "Topluluk için etkinlik/duyuru web arayüzü", Status = "Tamamlandı" },
     ];
 
+    private static int _nextId = _projects.Any() ? _projects.Max(p => p.Id) + 1 : 1;
+    private static readonly object _lock = new();
+
     public List<Project> GetAll()
     {
         // Gerçek hayatta burada DB sorgusu olur
@@ -22,5 +25,16 @@ public class ProjectService
     public Project? GetById(int id)
     {
         return _projects.FirstOrDefault(p => p.Id == id);
+    }
+
+    public Project Add(Project project)
+    {
+        lock (_lock)
+        {
+            project.Id = _nextId++;
+            _projects.Add(project);
+        }
+
+        return project;
     }
 }
