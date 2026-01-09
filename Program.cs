@@ -23,6 +23,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 var app = builder.Build();
 
+// Serve static files from wwwroot
+app.UseStaticFiles();
+
 // Ensure database created
 using (var scope = app.Services.CreateScope())
 {

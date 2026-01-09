@@ -36,22 +36,31 @@ public static class PagesEndpoints
         // Projeler
 app.MapGet("/projeler", (Services.ProjectService projectService) =>
 {
-    var projects = projectService.GetAll();
+    // Load all projects and order by Id (newest first)
+    var projects = projectService.GetAll().OrderByDescending(p => p.Id).ToList();
 
-    var items = string.Join("", projects.Select(p =>
-        $"""
+    string items;
+    if (!projects.Any())
+    {
+        items = "<li><em>Henüz proje yok.</em></li>";
+    }
+    else
+    {
+        items = string.Join("", projects.Select(p =>
+            $"""
 <li>
   <b>{System.Net.WebUtility.HtmlEncode(p.Name)}</b> — {System.Net.WebUtility.HtmlEncode(p.Status)}<br/>
   <small>{System.Net.WebUtility.HtmlEncode(p.Description)}</small>
 </li>
 """
-    ));
+        ));
+    }
 
-    var body = $"""
-<h1>Projeler</h1>
+  var body = $"""
+<h1>Projeler <small>({projects.Count})</small></h1>
 <div class="card">
   <h3>Yeni Proje Ekle</h3>
-  <form method="post" action="/projeler">
+  <form id="projectForm" method="post" action="/projeler">
     <label>Proje Adı</label>
     <input name="name" placeholder="Proje adı" />
 
@@ -66,7 +75,7 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
     </div>
   </form>
   <hr/>
-  <ul>
+  <ul id="projectsList">
     {items}
   </ul>
 </div>
@@ -74,6 +83,22 @@ app.MapGet("/projeler", (Services.ProjectService projectService) =>
 
     return Results.Content(Layout("Projeler", body), "text/html; charset=utf-8");
 });
+
+// API endpoint to create project via fetch (JSON)
+app.MapPost("/api/projeler", (aspnetegitim.Models.Project project, Services.ProjectService projectService) =>
+{
+  if (project == null) return Results.BadRequest();
+  var added = projectService.Add(project);
+  return Results.Json(added);
+});
+
+// API endpoint to list projects as JSON
+app.MapGet("/api/projeler", (Services.ProjectService projectService) =>
+{
+    var list = projectService.GetAll().OrderByDescending(p => p.Id).ToList();
+    return Results.Json(list);
+});
+
 
 // Projeler (POST) - yeni proje oluştur
 app.MapPost("/projeler", async (HttpRequest request, Services.ProjectService projectService) =>
