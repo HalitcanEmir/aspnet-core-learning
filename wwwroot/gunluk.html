@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Günlük - Not Defteri</title>
+  <style>
+    body { font-family: -apple-system, system-ui, Arial; max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-top: 16px; }
+    input, textarea { width: 100%; padding: 10px; margin-top: 6px; border-radius: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+    ul { list-style: none; padding-left: 0; }
+    li { margin-bottom: 12px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Ana Sayfa</a>
+    <a href="/projeler.html">Projeler</a>
+    <a href="/mesajlar">Mesajlar</a>
+  </nav>
+
+  <h1>Günlük - Not Defteri</h1>
+  <div class="card">
+    <form id="noteForm">
+      <label>Başlık</label>
+      <input name="title" placeholder="Bugün ne yaptın?" />
+
+      <label style="display:block; margin-top:8px;">Not</label>
+      <textarea name="body" rows="6" placeholder="Notunu yaz..."></textarea>
+
+      <div style="margin-top:12px;">
+        <button type="submit">Kaydet</button>
+      </div>
+    </form>
+  </div>
+
+  <h2>Son Notlar</h2>
+  <div class="card">
+    <ul id="notesList"></ul>
+  </div>
+
+  <script>
+    async function load() {
+      const res = await fetch('/api/notes');
+      const list = await res.json();
+      render(list);
+    }
+
+    function render(list) {
+      const ul = document.getElementById('notesList');
+      ul.innerHTML = '';
+      list.forEach(n => {
+        const li = document.createElement('li');
+        const date = new Date(n.createdAt).toLocaleString();
+        li.innerHTML = '<b>' + escapeHtml(n.title) + '</b> <small>(' + date + ')</small><div>' + escapeHtml(n.body) + '</div>';
+        ul.appendChild(li);
+      });
+    }
+
+    function escapeHtml(str){ if (!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
+
+    document.getElementById('noteForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = { title: form.elements['title'].value, body: form.elements['body'].value };
+      const res = await fetch('/api/notes', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      if (!res.ok) { alert('Kaydedilemedi'); return; }
+      const added = await res.json();
+      // prepend
+      const ul = document.getElementById('notesList');
+      const li = document.createElement('li');
+      const date = new Date(added.createdAt).toLocaleString();
+      li.innerHTML = '<b>' + escapeHtml(added.title) + '</b> <small>(' + date + ')</small><div>' + escapeHtml(added.body) + '</div>';
+      ul.insertBefore(li, ul.firstChild);
+      form.reset();
+    });
+
+    load();
+  </script>
+</body>
+</html>

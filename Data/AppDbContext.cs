@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
 
     public DbSet<Project> Projects { get; set; } = null!;
     public DbSet<Message> Messages { get; set; } = null!;
+    public DbSet<aspnetegitim.Models.Note> Notes { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -27,6 +28,14 @@ public class AppDbContext : DbContext
             eb.HasKey(m => m.Id);
             eb.Property(m => m.FullName).IsRequired(false);
             eb.Property(m => m.BodyHtml).IsRequired(false);
+        });
+
+        modelBuilder.Entity<aspnetegitim.Models.Note>(eb =>
+        {
+            eb.HasKey(n => n.Id);
+            eb.Property(n => n.Title).IsRequired(false);
+            eb.Property(n => n.Body).IsRequired(false);
+            eb.Property(n => n.CreatedAt).IsRequired();
         });
     }
 }

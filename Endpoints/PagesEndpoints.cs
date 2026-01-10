@@ -185,6 +185,21 @@ app.MapPost("/projeler", async (HttpRequest request, Services.ProjectService pro
 
             return Results.Content(Layout("Mesajlar", body), "text/html; charset=utf-8");
         });
+
+    // Notes API - list notes
+    app.MapGet("/api/notes", (Services.NoteService noteService) =>
+    {
+      var list = noteService.GetAll();
+      return Results.Json(list);
+    });
+
+    // Notes API - create note
+    app.MapPost("/api/notes", (aspnetegitim.Models.Note note, Services.NoteService noteService) =>
+    {
+      if (note == null) return Results.BadRequest();
+      var added = noteService.Add(note.Title ?? string.Empty, note.Body ?? string.Empty);
+      return Results.Json(added);
+    });
     }
 
     // UI (layout) burada, sonra ayrı dosyaya da taşıyacağız

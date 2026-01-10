@@ -20,6 +20,9 @@ if (!Directory.Exists(dbDir)) Directory.CreateDirectory(dbDir);
 builder.Services.AddDbContext<AppDbContext>(options =>
 	options.UseSqlite($"Data Source={dbPath}"));
 
+// Register NoteService
+builder.Services.AddScoped<NoteService>();
+
 
 var app = builder.Build();
 
@@ -41,6 +44,13 @@ using (var scope = app.Services.CreateScope())
 		});
 		db.SaveChanges();
 	}
+	// Ensure Notes table exists (for deployments where DB already existed)
+	db.Database.ExecuteSqlRaw(@"CREATE TABLE IF NOT EXISTS Notes (
+		Id INTEGER PRIMARY KEY AUTOINCREMENT,
+		Title TEXT,
+		Body TEXT,
+		CreatedAt TEXT NOT NULL
+	);");
 }
 
 // Route’ları ayrı dosyada tanımladık
