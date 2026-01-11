@@ -1,10 +1,14 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authentication;
+using System.Text.Json;
 using aspnetegitim.Services;
 
 namespace aspnetegitim.Endpoints;
 
 public static class PagesEndpoints
 {
+  private record LoginRequest(string? UserName, string? Password);
+
     public static void MapPages(this WebApplication app)
     {
         // Ana Sayfa
@@ -184,7 +188,7 @@ app.MapPost("/projeler", async (HttpRequest request, Services.ProjectService pro
 """;
 
             return Results.Content(Layout("Mesajlar", body), "text/html; charset=utf-8");
-        });
+        }).RequireAuthorization();
 
     // Notes API - list notes
     app.MapGet("/api/notes", (Services.NoteService noteService) =>
@@ -199,6 +203,34 @@ app.MapPost("/projeler", async (HttpRequest request, Services.ProjectService pro
       if (note == null) return Results.BadRequest();
       var added = noteService.Add(note.Title ?? string.Empty, note.Body ?? string.Empty);
       return Results.Json(added);
+    });
+
+    // Authentication: login
+    app.MapPost("/api/login", async (HttpContext http, aspnetegitim.Services.UserService userService) =>
+    {
+      try
+      {
+        var body = await System.Text.Json.JsonSerializer.DeserializeAsync<LoginRequest>(http.Request.Body);
+        if (body == null) return Results.BadRequest();
+        if (!userService.ValidateCredentials(body.UserName ?? string.Empty, body.Password ?? string.Empty))
+          return Results.Unauthorized();
+
+                var claims = new[] { new System.Security.Claims.Claim(System.Security.Claims.ClaimTypes.Name, body.UserName ?? string.Empty) };
+        var identity = new System.Security.Claims.ClaimsIdentity(claims, "MyCookie");
+        var principal = new System.Security.Claims.ClaimsPrincipal(identity);
+        await http.SignInAsync("MyCookie", principal);
+        return Results.Ok();
+      }
+      catch
+      {
+        return Results.BadRequest();
+      }
+    });
+
+    app.MapPost("/api/logout", async (HttpContext http) =>
+    {
+      await http.SignOutAsync("MyCookie");
+      return Results.Ok();
     });
     }
 

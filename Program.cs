@@ -13,6 +13,9 @@ builder.Services.AddScoped<ContactService>();
 builder.Services.AddScoped<ProjectService>();
 builder.Services.AddScoped<MessageService>();
 
+// User service for authentication
+builder.Services.AddScoped<UserService>();
+
 // Configure EF Core with SQLite (file under Data/app.db)
 var dbPath = Path.Combine(builder.Environment.ContentRootPath, "Data", "app.db");
 var dbDir = Path.GetDirectoryName(dbPath)!;
@@ -23,11 +26,25 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register NoteService
 builder.Services.AddScoped<NoteService>();
 
+// Authentication - Cookie
+builder.Services.AddAuthentication("MyCookie")
+	.AddCookie("MyCookie", options =>
+	{
+		options.LoginPath = "/login.html";
+		options.Cookie.HttpOnly = true;
+		options.Cookie.SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Lax;
+	});
+builder.Services.AddAuthorization();
+
 
 var app = builder.Build();
 
 // Serve static files from wwwroot
 app.UseStaticFiles();
+
+// Authentication/Authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Ensure database created
 using (var scope = app.Services.CreateScope())
@@ -51,6 +68,14 @@ using (var scope = app.Services.CreateScope())
 		Body TEXT,
 		CreatedAt TEXT NOT NULL
 	);");
+
+	// Ensure Users table exists and create default admin if none
+	if (!db.Set<aspnetegitim.Models.User>().Any())
+	{
+		// create default admin user
+		var userService = scope.ServiceProvider.GetRequiredService<UserService>();
+		userService.Create("admin", "admin");
+	}
 }
 
 // Route’ları ayrı dosyada tanımladık

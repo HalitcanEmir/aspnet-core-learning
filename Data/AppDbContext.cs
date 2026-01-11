@@ -12,6 +12,7 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects { get; set; } = null!;
     public DbSet<Message> Messages { get; set; } = null!;
     public DbSet<aspnetegitim.Models.Note> Notes { get; set; } = null!;
+    public DbSet<aspnetegitim.Models.User> Users { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,6 +37,16 @@ public class AppDbContext : DbContext
             eb.Property(n => n.Title).IsRequired(false);
             eb.Property(n => n.Body).IsRequired(false);
             eb.Property(n => n.CreatedAt).IsRequired();
+        });
+
+        modelBuilder.Entity<aspnetegitim.Models.User>(eb =>
+        {
+            eb.HasKey(u => u.Id);
+            eb.Property(u => u.UserName).IsRequired();
+            eb.HasIndex(u => u.UserName).IsUnique();
+            eb.Property(u => u.PasswordHash).IsRequired();
+            eb.Property(u => u.PasswordSalt).IsRequired();
+            eb.Property(u => u.CreatedAt).IsRequired();
         });
     }
 }

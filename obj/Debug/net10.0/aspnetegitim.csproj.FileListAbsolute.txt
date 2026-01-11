@@ -90,3 +90,4 @@
 /Users/halitcanemir/aspneteğitim/aspnet-core-learning/bin/Debug/net10.0/aspnetegitim.staticwebassets.runtime.json
 /Users/halitcanemir/aspneteğitim/aspnet-core-learning/obj/Debug/net10.0/compressed/x8ffpz587d-{0}-041x92chng-041x92chng.gz
 /Users/halitcanemir/aspneteğitim/aspnet-core-learning/obj/Debug/net10.0/compressed/yqqnd32pnc-{0}-vv1jfqpaxq-vv1jfqpaxq.gz
+/Users/halitcanemir/aspneteğitim/aspnet-core-learning/obj/Debug/net10.0/compressed/ub09eu3tv9-{0}-1xj1wciesu-1xj1wciesu.gz
