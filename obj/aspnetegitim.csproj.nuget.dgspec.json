@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "/Users/halitcanemir/aspnetegitim/aspnetegitim.csproj": {}
+    "/Users/halitcanemir/aspneteğitim/aspnet-core-learning/aspnetegitim.csproj": {}
   },
   "projects": {
-    "/Users/halitcanemir/aspnetegitim/aspnetegitim.csproj": {
+    "/Users/halitcanemir/aspneteğitim/aspnet-core-learning/aspnetegitim.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/halitcanemir/aspnetegitim/aspnetegitim.csproj",
+        "projectUniqueName": "/Users/halitcanemir/aspneteğitim/aspnet-core-learning/aspnetegitim.csproj",
         "projectName": "aspnetegitim",
-        "projectPath": "/Users/halitcanemir/aspnetegitim/aspnetegitim.csproj",
+        "projectPath": "/Users/halitcanemir/aspneteğitim/aspnet-core-learning/aspnetegitim.csproj",
         "packagesPath": "/Users/halitcanemir/.nuget/packages/",
-        "outputPath": "/Users/halitcanemir/aspnetegitim/obj/",
+        "outputPath": "/Users/halitcanemir/aspneteğitim/aspnet-core-learning/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "/Users/halitcanemir/.nuget/NuGet/NuGet.Config"
@@ -43,6 +43,16 @@
       "frameworks": {
         "net10.0": {
           "targetAlias": "net10.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "Microsoft.EntityFrameworkCore.Sqlite": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

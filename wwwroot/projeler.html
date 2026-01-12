@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Projeler</title>
+  <style>
+    body { font-family: -apple-system, system-ui, Arial; max-width: 900px; margin: 40px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-top: 16px; }
+    input, textarea { width: 100%; padding: 10px; margin-top: 6px; border-radius: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+    nav a { margin-right: 12px; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="/">Ana Sayfa</a>
+    <a href="/hakkimda">Hakkımda</a>
+    <a href="/projeler">Projeler (HTML)</a>
+    <a href="/iletisim">İletişim</a>
+    <a href="/mesajlar">Mesajlar</a>
+  </nav>
+
+  <h1>Projeler <small id="count">(0)</small></h1>
+  <div class="card">
+    <h3>Yeni Proje Ekle</h3>
+    <form id="projectForm">
+      <label>Proje Adı</label>
+      <input name="name" placeholder="Proje adı" />
+
+      <label style="display:block; margin-top:8px;">Açıklama</label>
+      <textarea name="description" rows="3" placeholder="Kısa açıklama"></textarea>
+
+      <label style="display:block; margin-top:8px;">Durum</label>
+      <input name="status" placeholder="Devam ediyor / Tamamlandı" />
+
+      <div style="margin-top:12px;">
+        <button type="submit">Ekle</button>
+      </div>
+    </form>
+    <hr/>
+    <ul id="projectsList"></ul>
+  </div>
+
+  <script>
+    async function load() {
+      const res = await fetch('/api/projeler');
+      const list = await res.json();
+      render(list);
+    }
+
+    function render(list) {
+      const ul = document.getElementById('projectsList');
+      ul.innerHTML = '';
+      list.forEach(p => {
+        const li = document.createElement('li');
+        li.innerHTML = '<b>' + escapeHtml(p.name) + '</b> — ' + escapeHtml(p.status) + '<br/><small>' + escapeHtml(p.description) + '</small>';
+        ul.appendChild(li);
+      });
+      document.getElementById('count').textContent = '(' + list.length + ')';
+    }
+
+    function escapeHtml(str){
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    document.getElementById('projectForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = { name: form.elements['name'].value, description: form.elements['description'].value, status: form.elements['status'].value };
+      const res = await fetch('/api/projeler', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      if (!res.ok) { alert('Proje eklenemedi'); return; }
+      const added = await res.json();
+      // prepend
+      const ul = document.getElementById('projectsList');
+      const li = document.createElement('li');
+      li.innerHTML = '<b>' + escapeHtml(added.name) + '</b> — ' + escapeHtml(added.status) + '<br/><small>' + escapeHtml(added.description) + '</small>';
+      ul.insertBefore(li, ul.firstChild);
+      const count = parseInt(document.getElementById('count').textContent.replace(/\D/g,'')) || 0;
+      document.getElementById('count').textContent = '(' + (count+1) + ')';
+      form.reset();
+    });
+
+    load();
+  </script>
+</body>
+</html>

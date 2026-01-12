@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Giriş</title>
+  <style>
+    body { font-family: -apple-system, system-ui, Arial; max-width: 500px; margin: 40px auto; padding: 0 16px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 16px; margin-top: 16px; }
+    input { width: 100%; padding: 10px; margin-top: 6px; border-radius: 10px; border: 1px solid #ccc; }
+    button { padding: 10px 14px; border-radius: 10px; border: 1px solid #ccc; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Giriş</h1>
+  <div class="card">
+    <form id="loginForm">
+      <label>Kullanıcı Adı</label>
+      <input name="userName" placeholder="admin" />
+
+      <label style="display:block; margin-top:8px;">Parola</label>
+      <input name="password" type="password" />
+
+      <div style="margin-top:12px;">
+        <button type="submit">Giriş yap</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const form = e.currentTarget;
+      const data = { userName: form.elements['userName'].value, password: form.elements['password'].value };
+      const res = await fetch('/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+      if (res.ok) {
+        // redirect to home
+        window.location.href = '/';
+      } else {
+        alert('Login failed');
+      }
+    });
+  </script>
+</body>
+</html>
